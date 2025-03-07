@@ -1,18 +1,18 @@
 import { Student } from './student.interface';
-import { StudentModal } from './student.schema.modal';
+import { StudentModel } from './student.schema.modal';
 
 const createStudentIntoDB = async (student: Student) => {
-  const result = await StudentModal.create(student);
+  const result = await StudentModel.create(student);
   return result;
 };
 
 const getAllStudentDataFromDB = async () => {
-  const result = await StudentModal.find();
+  const result = await StudentModel.find();
   return result;
 };
 
 const getSingleStudentFromDB = async (id: string) => {
-  const result = await StudentModal.findOne({ id });
+  const result = await StudentModel.findOne({ id });
   return result;
 };
 
