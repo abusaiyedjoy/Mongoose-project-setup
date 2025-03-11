@@ -1,26 +1,49 @@
-import { Schema, model, connect } from 'mongoose';
+import { Model, Types } from 'mongoose';
 
-export type FullName = {
+export type TUserName = {
   firstName: string;
   middleName: string;
   lastName: string;
 };
 
-export type Guardian = {
+export type TGuardian = {
   fatherName: string;
   fatherOccupation: string;
+  fatherContactNo: string;
   motherName: string;
   motherOccupation: string;
+  motherContactNo: string;
 };
 
-export type Student = {
-  id: string;
-  name: FullName;
-  email: string;
-  gender: 'male' | 'female';
-  dateOfBirth?: string;
+export type TLocalGuardian = {
+  name: string;
+  occupation: string;
   contactNo: string;
-  bloodGroup: 'A+' | 'A-' | 'B+' | 'B-' | 'AB+' | 'AB-' | 'O+' | 'O-';
-  presentAddress: string;
-  guardian: Guardian;
+  address: string;
 };
+
+export type TStudent = {
+  id: string;
+  user: Types.ObjectId;
+  password: string;
+  name: TUserName;
+  gender: 'male' | 'female' | 'other';
+  dateOfBirth?: string;
+  email: string;
+  contactNo: string;
+  emergencyContactNo: string;
+  bloogGroup?: 'A+' | 'A-' | 'B+' | 'B-' | 'AB+' | 'AB-' | 'O+' | 'O-';
+  presentAddress: string;
+  permanentAddress: string;
+  guardian: TGuardian;
+  localGuardian: TLocalGuardian;
+  profileImg?: string;
+  isDeleted: boolean;
+};
+
+//for creating static
+
+export interface StudentModel extends Model<TStudent> {
+  isUserExists(id: string): Promise<TStudent | null>;
+}
+

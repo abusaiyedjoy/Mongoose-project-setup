@@ -1,140 +1,176 @@
-import { Schema, model, connect } from 'mongoose';
-import { FullName, Guardian, Student } from './student.interface';
-import validator from 'validator';
+import { Schema, model } from 'mongoose';
+import {
+  StudentModel,
+  TGuardian,
+  TLocalGuardian,
+  TStudent,
+  TUserName,
+} from './student.interface';
 
-const phoneNumberValidator = (value: string) => validator.isMobilePhone(value, 'any', { strictMode: false });
-
-const dateValidator = (value: string) => validator.isDate(value, { format: 'YYYY-MM-DD', strictMode: true });
-
-const studentNameSchema = new Schema<FullName>({
+const userNameSchema = new Schema<TUserName>({
   firstName: {
     type: String,
+    required: [true, 'First Name is required'],
     trim: true,
-    required: [true, 'First Name is Required'],
-    validate: {
-      validator: (value: string) => validator.isAlpha(value),
-      message: '{VALUE} is not valid, it should contain only alphabetic characters',
-    },
+    maxlength: [20, 'Name can not be more than 20 characters'],
   },
-  middleName: { 
+  middleName: {
     type: String,
     trim: true,
-    validate: {
-      validator: (value: string) => validator.isAlpha(value),
-      message: '{VALUE} is not valid, it should contain only alphabetic characters',
-    },
   },
   lastName: {
     type: String,
     trim: true,
-    required: [true, 'Last Name is Required'],
-    validate: {
-      validator: (value: string) => validator.isAlpha(value),
-      message: '{VALUE} is not valid, it should contain only alphabetic characters',
-    },
+    required: [true, 'Last Name is required'],
+    maxlength: [20, 'Name can not be more than 20 characters'],
   },
 });
 
-const studentGuardianSchema = new Schema<Guardian>({
-  fatherName: { 
-    type: String, 
-    required: [true, 'Father\'s Name is required'], 
+const guardianSchema = new Schema<TGuardian>({
+  fatherName: {
+    type: String,
     trim: true,
-    validate: {
-      validator: (value: string) => validator.isAlpha(value),
-      message: '{VALUE} is not valid, it should contain only alphabetic characters',
-    },
+    required: [true, 'Father Name is required'],
   },
-  fatherOccupation: { 
-    type: String, 
-    required: [true, 'Father\'s Occupation is required'], 
+  fatherOccupation: {
+    type: String,
     trim: true,
+    required: [true, 'Father occupation is required'],
   },
-  motherName: { 
-    type: String, 
-    required: [true, 'Mother\'s Name is required'], 
-    trim: true,
-    validate: {
-      validator: (value: string) => validator.isAlpha(value),
-      message: '{VALUE} is not valid, it should contain only alphabetic characters',
-    },
+  fatherContactNo: {
+    type: String,
+    required: [true, 'Father Contact No is required'],
   },
-  motherOccupation: { 
-    type: String, 
-    required: [true, 'Mother\'s Occupation is required'], 
-    trim: true,
+  motherName: {
+    type: String,
+    required: [true, 'Mother Name is required'],
+  },
+  motherOccupation: {
+    type: String,
+    required: [true, 'Mother occupation is required'],
+  },
+  motherContactNo: {
+    type: String,
+    required: [true, 'Mother Contact No is required'],
   },
 });
 
-const studentSchema = new Schema<Student>({
-  id: { 
-    type: String, 
-    required: [true, 'Student ID is required'], 
-    unique: true,
-    trim: true,
-    validate: {
-      validator: (value: string) => validator.isAlphanumeric(value),
-      message: '{VALUE} is not valid, it should contain only alphanumeric characters',
-    },
-  },
+const localGuradianSchema = new Schema<TLocalGuardian>({
   name: {
-    type: studentNameSchema,
-    required: true,
-  },
-  email: { 
-    type: String, 
-    required: [true, 'Email is required'],
-    unique: true,
-    validate: {
-      validator: (value: string) => validator.isEmail(value),
-      message: '{VALUE} is not a valid email address',
-    },
-  },
-  gender: {
     type: String,
-    enum: {
-      values: ['male', 'female'],
-      message: '{VALUE} is not valid, it must be either male or female',
-    },
-    required: [true, 'Gender is required'],
+    required: [true, 'Name is required'],
   },
-  dateOfBirth: { 
-    type: String, 
-    required: [true, 'Date of Birth is required'],
-    validate: {
-      validator: dateValidator,
-      message: '{VALUE} is not a valid date. Please use the format YYYY-MM-DD',
-    },
-  },
-  contactNo: { 
-    type: String, 
-    required: [true, 'Contact Number is required'],
-    validate: {
-      validator: phoneNumberValidator,
-      message: '{VALUE} is not a valid phone number',
-    },
-  },
-  bloodGroup: {
+  occupation: {
     type: String,
-    enum: {
-      values: ['A+', 'A-', 'AB+', 'AB-', 'B+', 'B-', 'O+', 'O-'],
-      message: '{VALUE} is not valid. Choose from A+, A-, AB+, AB-, B+, B-, O+, O-',
-    },
-    required: [true, 'Blood Group is required'],
+    required: [true, 'Occupation is required'],
   },
-  presentAddress: { 
-    type: String, 
-    required: [true, 'Present Address is required'], 
-    trim: true,
-    validate: {
-      validator: (value: string) => value.length > 0,
-      message: 'Present Address cannot be empty',
-    },
+  contactNo: {
+    type: String,
+    required: [true, 'Contact number is required'],
   },
-  guardian: {
-    type: studentGuardianSchema,
-    required: [true, 'Guardian details are required'],
+  address: {
+    type: String,
+    required: [true, 'Address is required'],
   },
 });
 
-export const StudentModel = model<Student>('Student', studentSchema);
+const studentSchema = new Schema<TStudent, StudentModel>(
+  {
+    id: {
+      type: String,
+      required: [true, 'ID is required'],
+      unique: true,
+    },
+    user: {
+      type: Schema.Types.ObjectId,
+      required: [true, 'User id is required'],
+      unique: true,
+      ref: 'User',
+    },
+    name: {
+      type: userNameSchema,
+      required: [true, 'Name is required'],
+    },
+    gender: {
+      type: String,
+      enum: {
+        values: ['male', 'female', 'other'],
+        message: '{VALUE} is not a valid gender',
+      },
+      required: [true, 'Gender is required'],
+    },
+    dateOfBirth: { type: String },
+    email: {
+      type: String,
+      required: [true, 'Email is required'],
+      unique: true,
+    },
+    contactNo: { type: String, required: [true, 'Contact number is required'] },
+    emergencyContactNo: {
+      type: String,
+      required: [true, 'Emergency contact number is required'],
+    },
+    bloogGroup: {
+      type: String,
+      enum: {
+        values: ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'],
+        message: '{VALUE} is not a valid blood group',
+      },
+    },
+    presentAddress: {
+      type: String,
+      required: [true, 'Present address is required'],
+    },
+    permanentAddress: {
+      type: String,
+      required: [true, 'Permanent address is required'],
+    },
+    guardian: {
+      type: guardianSchema,
+      required: [true, 'Guardian information is required'],
+    },
+    localGuardian: {
+      type: localGuradianSchema,
+      required: [true, 'Local guardian information is required'],
+    },
+    profileImg: { type: String },
+    isDeleted: {
+      type: Boolean,
+      default: false,
+    },
+  },
+  {
+    toJSON: {
+      virtuals: true,
+    },
+  },
+);
+
+// virtual
+studentSchema.virtual('fullName').get(function () {
+  return this.name.firstName + this.name.middleName + this.name.lastName;
+});
+
+// Query Middleware
+studentSchema.pre('find', function (next) {
+  this.find({ isDeleted: { $ne: true } });
+  next();
+});
+
+studentSchema.pre('findOne', function (next) {
+  this.find({ isDeleted: { $ne: true } });
+  next();
+});
+
+studentSchema.pre('aggregate', function (next) {
+  this.pipeline().unshift({ $match: { isDeleted: { $ne: true } } });
+  next();
+});
+
+//creating a custom static method
+studentSchema.statics.isUserExists = async function (id: string) {
+  const existingUser = await Student.findOne({ id });
+  return existingUser;
+};
+
+export const Student = model<TStudent, StudentModel>('Student', studentSchema);

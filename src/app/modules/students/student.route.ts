@@ -1,14 +1,12 @@
 import express from 'express';
-import { StudentController } from './student.controller';
-import { StudentModal } from './student.schema.modal';
+import { StudentControllers } from './student.controller';
 
 const router = express.Router();
 
-// will call controller
-router.post('/create-student', StudentController.createStudent);
+router.get('/:studentId', StudentControllers.getSingleStudent);
 
-router.get('/', StudentController.getStudents);
+router.delete('/:studentId', StudentControllers.deleteStudent);
 
-router.get('/:studentId', StudentController.getSingleStudent);
+router.get('/', StudentControllers.getAllStudents);
 
-export const StudentRoute = router;
+export const StudentRoutes = router;
