@@ -2,7 +2,7 @@ import config from '../../config';
 import { TStudent } from '../students/student.interface';
 import { Student } from '../students/student.schema.modal';
 import { TUser } from './user.interface';
-import { User } from './user.mode';
+import { User } from './user.model';
 
 const createStudentIntoDB = async (password: string, studentData: TStudent) => {
   // create a user object
