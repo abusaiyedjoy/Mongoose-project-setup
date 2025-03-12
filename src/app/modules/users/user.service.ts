@@ -1,4 +1,5 @@
 import config from '../../config';
+import { TAcademicSemester } from '../academicSemester/academicSemester.interface';
 import { AcademicSemesterModel } from '../academicSemester/academicSemester.model';
 import { TStudent } from '../students/student.interface';
 import { Student } from '../students/student.schema.modal';
@@ -22,7 +23,7 @@ const createStudentIntoDB = async (password: string, payload: TStudent) => {
   );
 
   //set  generated id
-  userData.id = await generateStudentId(admissionSemester as any);
+  userData.id = await generateStudentId(admissionSemester as TAcademicSemester);
 
   // create a user
   const newUser = await User.create(userData);

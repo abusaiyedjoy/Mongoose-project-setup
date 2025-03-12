@@ -1,4 +1,4 @@
-import { Student } from "./student.schema.modal";
+import { Student } from './student.schema.modal';
 
 const getAllStudentsFromDB = async () => {
   const result = await Student.find();
